@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNSVM Student Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#241b56;
+    --indigo-2:#3b2f8f;
+    --violet:#6d4bd6;
+    --marigold:#f5a524;
+    --coral:#ef5f5f;
+    --teal:#12a594;
+    --pink:#e0559c;
+    --cream:#fdf9f0;
+    --card:#ffffff;
+    --line:#e8e0d2;
+    --line-2:#f2ece0;
+    --soft:#6b6480;
+    --ink:#241b56;
+    --display:'Fraunces',Georgia,serif;
+    --body:'Outfit',-apple-system,sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--body);color:var(--ink);font-size:14.5px;line-height:1.55;
+    background:var(--cream);
+    background-image:
+      radial-gradient(900px 400px at 8% -6%, rgba(109,75,214,.12), transparent 60%),
+      radial-gradient(700px 380px at 96% 2%, rgba(245,165,36,.16), transparent 60%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:0 18px;}
+  a{color:inherit;}
+
+  header.top{
+    background:linear-gradient(115deg,#241b56 0%,#3b2f8f 52%,#6d4bd6 100%);
+    color:#fff;position:relative;overflow:hidden;
+  }
+  header.top::after{
+    content:"";position:absolute;inset:auto 0 -1px 0;height:5px;
+    background:linear-gradient(90deg,var(--marigold),var(--coral),var(--pink),var(--teal),var(--marigold));
+  }
+  header.top::before{
+    content:"";position:absolute;top:-120px;right:-90px;width:340px;height:340px;border-radius:50%;
+    background:radial-gradient(circle,rgba(245,165,36,.35),transparent 65%);
+  }
+  .top-inner{max-width:1140px;margin:0 auto;padding:18px 18px 15px;display:flex;align-items:center;gap:15px;flex-wrap:wrap;position:relative;z-index:1;}
+  .crest{width:56px;height:56px;flex:none;filter:drop-shadow(0 3px 8px rgba(0,0,0,.3));}
+  .brand{flex:1;min-width:190px;}
+  .brand h1{font-family:var(--display);font-size:21px;font-weight:700;margin:0;letter-spacing:-.2px;}
+  .brand .sub{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#ffd89a;margin-top:3px;font-weight:600;}
+  .whoami{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.14);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:5px 14px 5px 5px;font-size:12.5px;font-weight:500;}
+  .av{width:29px;height:29px;border-radius:50%;background:linear-gradient(135deg,var(--marigold),var(--coral));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;}
+  nav.tabs{max-width:1140px;margin:0 auto;padding:0 18px;display:flex;overflow-x:auto;scrollbar-width:none;position:relative;z-index:1;}
+  nav.tabs::-webkit-scrollbar{display:none;}
+  nav.tabs button{background:none;border:none;border-bottom:3px solid transparent;color:rgba(255,255,255,.72);font:inherit;font-size:13px;font-weight:600;padding:11px 15px;cursor:pointer;white-space:nowrap;transition:.15s;}
+  nav.tabs button:hover{color:#fff;background:rgba(255,255,255,.07);}
+  nav.tabs button.active{color:#fff;border-bottom-color:var(--marigold);}
+  nav.tabs .dot{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;background:var(--coral);color:#fff;border-radius:99px;font-size:10px;font-weight:700;margin-left:6px;padding:0 5px;}
+
+  main{padding:22px 0 60px;}
+  .grid{display:grid;grid-template-columns:1.9fr 1fr;gap:18px;align-items:start;}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 14px rgba(36,27,86,.05);}
+  .card h2{font-family:var(--display);font-size:16.5px;font-weight:700;margin:0 0 14px;}
+  .eyebrow{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;display:block;margin-bottom:3px;}
+  .e-violet{color:var(--violet);} .e-coral{color:var(--coral);} .e-teal{color:var(--teal);}
+  .e-gold{color:#c07f0a;} .e-pink{color:var(--pink);}
+  .card h2 .side{float:right;font-family:var(--body);font-size:11.5px;font-weight:500;color:var(--soft);}
+
+  .hero{
+    border:none;color:#fff;padding:0;overflow:hidden;position:relative;
+    background:linear-gradient(120deg,#3b2f8f,#6d4bd6 55%,#e0559c);
+  }
+  .hero .in{padding:22px 24px;position:relative;z-index:1;}
+  .hero .blob{position:absolute;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(245,165,36,.45),transparent 68%);top:-80px;right:-40px;}
+  .hero h2{font-size:22px;margin:0 0 6px;color:#fff;}
+  .hero p{margin:0;font-size:13.5px;color:rgba(255,255,255,.9);max-width:640px;}
+  .hero b{color:#ffd89a;}
+  .chips{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;}
+  .chips a{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;transition:.15s;}
+  .chips a:hover{background:#fff;color:var(--indigo-2);}
+
+  .strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:5px;scrollbar-width:none;}
+  .strip::-webkit-scrollbar{display:none;}
+  .slot{flex:none;width:96px;border:1px solid var(--line);border-radius:11px;padding:10px 9px;background:#fbf8f1;transition:.15s;}
+  .slot .t{font-family:var(--mono);font-size:10px;color:var(--soft);}
+  .slot .s{font-size:12.5px;font-weight:600;margin-top:3px;}
+  .slot.now{border-color:var(--marigold);background:linear-gradient(160deg,#fff6e2,#ffeecb);box-shadow:0 0 0 3px rgba(245,165,36,.22);}
+  .slot.changed{border-color:var(--coral);background:linear-gradient(160deg,#fff0f0,#ffe4e4);}
+  .slot .note{font-size:9.5px;font-weight:700;color:var(--coral);margin-top:4px;line-height:1.3;}
+
+  .post{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line-2);}
+  .post:last-child{border-bottom:none;}
+  .pic{width:36px;height:36px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;}
+  .post .who{font-size:12px;color:var(--soft);margin-bottom:2px;}
+  .post .who b{color:var(--ink);font-size:13.5px;}
+  .post .txt{font-size:13.5px;}
+  .post .meta{font-size:11.5px;color:var(--soft);margin-top:5px;}
+  .post img.thumb{width:100%;max-width:330px;border-radius:9px;margin-top:9px;display:block;}
+  .pill{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-left:7px;vertical-align:1px;}
+  .p-class{background:#ece7ff;color:var(--violet);}
+  .p-club{background:#d8f5f0;color:#0b7f72;}
+  .p-school{background:#ffe6d5;color:#c04a1a;}
+  .p-mag{background:#fde3ef;color:#b4327a;}
+
+  .cu-head{background:linear-gradient(120deg,#fff4dd,#ffe7d0);border:1px solid #f6d9a8;border-radius:14px;padding:16px 18px;margin-bottom:16px;font-size:13.5px;}
+  .cu-head b{font-family:var(--display);font-size:16px;}
+  .cu-day .d{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:#fff;background:var(--indigo-2);display:inline-block;padding:4px 11px;border-radius:99px;margin-bottom:10px;}
+  .cu-day{margin-bottom:20px;}
+  .cu-row{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .cu-row:last-child{border-bottom:none;}
+  .subj{width:120px;flex:none;font-size:12px;font-weight:700;color:var(--violet);}
+  .cu-row .what{flex:1;font-size:13.5px;}
+  .cu-row .what em{display:block;font-style:normal;color:var(--soft);font-size:12px;margin-top:2px;}
+  .todo{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--coral);border-radius:99px;padding:4px 10px;white-space:nowrap;}
+  .btn{background:linear-gradient(135deg,var(--indigo-2),var(--violet));color:#fff;border:none;border-radius:9px;padding:10px 20px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;}
+  .btn:hover{filter:brightness(1.12);}
+  .btn.gold{background:linear-gradient(135deg,var(--marigold),var(--coral));}
+
+  .clubs{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;}
+  .club{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card);transition:.16s;}
+  .club:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(36,27,86,.11);}
+  .club .ct{height:78px;background-size:cover;background-position:center;position:relative;}
+  .club .ct::after{content:"";position:absolute;inset:0;}
+  .club .bd{padding:13px 14px;}
+  .club .nm{font-family:var(--display);font-size:15px;font-weight:700;}
+  .club .mt{font-size:11.5px;color:var(--soft);margin:3px 0 8px;}
+  .club .nx{font-size:12.5px;margin-bottom:12px;min-height:34px;}
+  .follow{width:100%;border:1.5px solid var(--violet);background:none;color:var(--violet);border-radius:8px;padding:7px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+  .follow.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+  .mag-hero{border-radius:14px;overflow:hidden;margin-bottom:16px;border:1px solid var(--line);box-shadow:0 4px 20px rgba(36,27,86,.09);}
+  .mag-hero .ph{height:210px;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;}
+  .mag-hero .ph .ov{width:100%;padding:20px 22px;color:#fff;background:linear-gradient(transparent,rgba(20,12,50,.88));}
+  .mag-hero .ph .cl{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;font-weight:700;color:#ffd89a;}
+  .mag-hero .ph .mo{font-family:var(--display);font-size:29px;font-weight:700;line-height:1.1;margin-top:3px;}
+  .mag-hero .bar{background:var(--card);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .mag-hero .bar .t{font-size:13px;color:var(--soft);}
+
+  .mag-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+  .mag{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--card);transition:.16s;cursor:pointer;}
+  .mag:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(36,27,86,.12);}
+  .mag .cv{height:130px;background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:flex-end;padding:11px;color:#fff;}
+  .mag .cv .in{background:linear-gradient(transparent,rgba(20,12,50,.85));margin:-11px;padding:26px 11px 11px;}
+  .mag .cv .cl{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;opacity:.9;}
+  .mag .cv .mo{font-family:var(--display);font-size:16px;font-weight:700;}
+  .mag .ft{padding:9px 12px;font-size:11.5px;color:var(--soft);}
+
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:11px;}
+  .ph-tile{aspect-ratio:4/3;border-radius:11px;overflow:hidden;position:relative;cursor:pointer;}
+  .ph-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:.3s;}
+  .ph-tile:hover img{transform:scale(1.07);}
+  .ph-tile .cap{position:absolute;inset:auto 0 0 0;padding:20px 10px 9px;color:#fff;font-size:11.5px;font-weight:600;background:linear-gradient(transparent,rgba(20,12,50,.85));}
+
+  .q{border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin-bottom:12px;background:var(--card);}
+  .q .qt{font-size:14px;font-weight:600;}
+  .q .qm{font-size:11.5px;color:var(--soft);margin-top:3px;}
+  .ans{margin-top:10px;padding:11px 13px;background:#faf7f0;border-left:3px solid var(--line);border-radius:0 9px 9px 0;font-size:13px;}
+  .ans.best{border-left-color:var(--teal);background:#eefaf8;}
+  .ans .aw{font-size:11px;color:var(--soft);margin-top:4px;}
+  .tick{color:var(--teal);font-weight:700;}
+  .ask{display:flex;gap:8px;margin-top:14px;}
+  .ask input{flex:1;border:1px solid var(--line);border-radius:9px;padding:10px 13px;font:inherit;font-size:13px;background:#fbf8f1;}
+  .ask input:focus{outline:2px solid var(--violet);outline-offset:1px;}
+
+  .ach{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2);align-items:center;}
+  .ach:last-child{border-bottom:none;}
+  .medal{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;}
+  .ach .an{font-size:13.5px;font-weight:600;}
+  .ach .ad{font-size:11.5px;color:var(--soft);}
+  .house{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;}
+  .house .hn{width:72px;font-weight:600;}
+  .house .ht{flex:1;height:10px;background:#f2ece0;border-radius:99px;overflow:hidden;}
+  .house .hf{height:100%;border-radius:99px;}
+  .house .hp{width:38px;text-align:right;font-family:var(--mono);font-size:11.5px;color:var(--soft);}
+
+  .modnote{font-size:11.5px;color:var(--soft);background:#faf7f0;border:1px dashed var(--line);border-radius:10px;padding:10px 13px;margin-top:14px;}
+  .badge{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(120deg,#fff4dd,#ffe0e0);border:1px solid #f6d9a8;color:#b4460f;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:6px 13px;border-radius:99px;}
+  .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--coral);}
+  footer{text-align:center;font-size:11.5px;color:var(--soft);padding:24px 0 8px;}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <svg class="crest" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#f5a524"/><stop offset="1" stop-color="#ef5f5f"/></linearGradient></defs>
+      <circle cx="32" cy="32" r="30" fill="#241b56" stroke="url(#g1)" stroke-width="2.5"/>
+      <path d="M32 14 L46 21 V29 C46 39 40 46 32 50 C24 46 18 39 18 29 V21 Z" fill="none" stroke="#ffd89a" stroke-width="1.7"/>
+      <path d="M24 27 h16 M24 32 h16 M24 37 h11" stroke="#ffd89a" stroke-width="1.7" stroke-linecap="round"/>
+    </svg>
+    <div class="brand">
+      <h1>St. Nandlal Smriti Vidya Mandir</h1>
+      <div class="sub">Ghatshila · Student Activity &amp; Communication Portal</div>
+    </div>
+    <div class="whoami"><div class="av">YS</div> Yamir Singh Sagar · Class VII</div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="active" data-tab="today">Today</button>
+    <button data-tab="catchup">Catch Up <span class="dot" id="cu-count">7</span></button>
+    <button data-tab="clubs">Clubs</button>
+    <button data-tab="magazine">E-Magazine</button>
+    <button data-tab="gallery">Gallery</button>
+    <button data-tab="wall">Doubt Wall</button>
+    <button data-tab="achievements">Achievements</button>
+  </nav>
+</header>
+
+<div class="wrap"><main>
+
+<section id="today" class="view">
+  <div class="card hero">
+    <div class="blob"></div>
+    <div class="in">
+      <h2>Good morning, Yamir.</h2>
+      <p>You were away on Thursday and Friday. There are <b>7 things</b> waiting in Catch Up, including two homework tasks due tomorrow.</p>
+      <div class="chips">
+        <a onclick="go('catchup')">Open Catch Up</a>
+        <a href="magazine.html">Read the August issue</a>
+        <a onclick="go('clubs')">Quiz Club trials — sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2><span class="eyebrow e-violet">Your day</span>Monday, 17 August<span class="side">Class VII-B</span></h2>
+        <div class="strip" id="strip"></div>
+      </div>
+      <div class="card">
+        <h2><span class="eyebrow e-coral">Feed</span>What's happening<span class="side">Class · clubs · school</span></h2>
+        <div id="feed"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h2><span class="eyebrow e-teal">Coming up</span>Next ten days</h2>
+        <div id="upcoming"></div>
+      </div>
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="height:120px;background-size:cover;background-position:center;" id="mag-teaser"></div>
+        <div style="padding:16px 20px;">
+          <span class="eyebrow e-pink">This month</span>
+          <div style="font-family:var(--display);font-size:16px;font-weight:700;margin-bottom:5px;">VII-B Magazine — Monsoon</div>
+          <div style="font-size:13px;color:var(--soft);margin-bottom:12px;">Submissions close 25 August. Poems, artwork, photographs and reports.</div>
+          <a class="btn gold" href="magazine.html" style="text-decoration:none;display:inline-block;">Read the issue</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="catchup" class="view" style="display:none;">
+  <div class="cu-head"><b>Everything since you last logged in</b><br>Last visit: Wednesday, 12 August · 4:20 PM. Showing 7 new items across 3 days.</div>
+  <div class="card">
+    <div id="catchup-body"></div>
+    <div style="margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <button class="btn" onclick="markAllSeen()">Mark all as caught up</button>
+      <span style="font-size:12px;color:var(--soft);">Items stay here until you clear them.</span>
+    </div>
+  </div>
+</section>
+
+<section id="clubs" class="view" style="display:none;">
+  <div class="card">
+    <h2><span class="eyebrow e-teal">Clubs &amp; houses</span>Follow a club to see its posts in your feed</h2>
+    <div class="clubs" id="clubs-grid"></div>
+  </div>
+</section>
+
+<section id="magazine" class="view" style="display:none;">
+  <div class="mag-hero">
+    <div class="ph" id="mag-cover">
+      <div class="ov">
+        <div class="cl">Class VII-B · Monthly Magazine</div>
+        <div class="mo">August 2026 — Monsoon</div>
+      </div>
+    </div>
+    <div class="bar">
+      <div class="t">Six pieces · Edited by Ishita, Rohan and Yamir · Approved by Mrs. S. Mahato</div>
+      <a class="btn" href="magazine.html" style="text-decoration:none;">Open full issue</a>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="eyebrow e-pink">Archive</span>Every class, every month</h2>
+    <div class="mag-shelf" id="mag-shelf"></div>
+    <div class="modnote">Each class publishes one issue a month. Editors rotate so different students get a turn at writing, editing and design. Every piece is approved by the class teacher before publication.</div>
+  </div>
+</section>
+
+<section id="gallery" class="view" style="display:none;">
+  <div class="card">
+    <h2><span class="eyebrow e-gold">Gallery</span>Independence Day 2026<span class="side">42 photos · 3 videos</span></h2>
+    <div class="gal" id="gal1"></div>
+  </div>
+  <div class="card">
+    <h2><span class="eyebrow e-gold">Gallery</span>Inter-House Sports Week<span class="side">88 photos</span></h2>
+    <div class="gal" id="gal2"></div>
+  </div>
+</section>
+
+<section id="wall" class="view" style="display:none;">
+  <div class="card">
+    <h2><span class="eyebrow e-violet">Doubt Wall</span>Class VII-B<span class="side">Visible to your class teacher</span></h2>
+    <div id="wall-body"></div>
+    <div class="ask">
+      <input id="q-input" placeholder="Ask your class a question…">
+      <button class="btn" onclick="askQ()">Post</button>
+    </div>
+    <div class="modnote">Posts go to the class teacher for approval before they appear. There is no private messaging in this portal.</div>
+  </div>
+</section>
+
+<section id="achievements" class="view" style="display:none;">
+  <div class="grid">
+    <div class="card">
+      <h2><span class="eyebrow e-coral">Recognition</span>Recent achievements</h2>
+      <div id="ach-body"></div>
+    </div>
+    <div class="card">
+      <h2><span class="eyebrow e-teal">House points</span>Session 2026–27</h2>
+      <div id="house-body"></div>
+    </div>
+  </div>
+</section>
+
+<p style="text-align:center;"><span class="badge">Pilot build — sample content and stock photographs</span></p>
+</main></div>
+
+<footer>Built by Yamir Singh Sagar, Class VII — a working sample submitted for the Head of School's review.</footer>
+
+<script>
+const IMG = (seed,w,h)=>`https://picsum.photos/seed/${seed}/${w}/${h}`;
+
+const periods=[
+ {t:"9:00",s:"English"},{t:"9:45",s:"Mathematics"},{t:"10:30",s:"Science",now:true},
+ {t:"11:30",s:"Science Lab",changed:"Moved from Room 12"},{t:"12:15",s:"Hindi"},{t:"1:30",s:"Games"}
+];
+document.getElementById('strip').innerHTML=periods.map(p=>
+ `<div class="slot ${p.changed?'changed':''} ${p.now?'now':''}">
+   <div class="t">${p.t}</div><div class="s">${p.s}</div>
+   ${p.changed?`<div class="note">${p.changed}</div>`:''}</div>`).join('');
+
+const feed=[
+ {who:"Mrs. S. Mahato",role:"Class Teacher, VII-B",col:"linear-gradient(135deg,#3b2f8f,#6d4bd6)",ini:"SM",tag:"class",txt:"Science Lab shifted to Period 4 today. Bring your practical notebook.",meta:"20 minutes ago"},
+ {who:"Quiz Club",role:"Anirban, Club Captain",col:"linear-gradient(135deg,#12a594,#0b7f72)",ini:"QC",tag:"club",txt:"Trials for the inter-school quiz team on Wednesday, 3:30 PM in the multimedia room. Classes VI to IX may sign up.",meta:"2 hours ago · 14 signed up"},
+ {who:"VII-B Editorial Board",role:"Monthly magazine",col:"linear-gradient(135deg,#e0559c,#b4327a)",ini:"ED",tag:"mag",txt:"August issue — theme 'Monsoon' — is live. Submissions for September close on the 25th.",meta:"Yesterday",img:IMG("monsoon-street",660,360)},
+ {who:"School Office",role:"Announcement",col:"linear-gradient(135deg,#f5a524,#ef5f5f)",ini:"SO",tag:"school",txt:"Parent-Teacher Meeting on Saturday, 23 August, 10 AM onwards. Classroom-wise timings on the notice board.",meta:"Yesterday"},
+ {who:"Mr. R. Kumar",role:"Sports",col:"linear-gradient(135deg,#3b2f8f,#241b56)",ini:"RK",tag:"school",txt:"Inter-house football final moved to Friday due to the ground condition. Houses to report by 3 PM.",meta:"2 days ago",img:IMG("school-football",660,360)}
+];
+document.getElementById('feed').innerHTML=feed.map(f=>
+ `<div class="post">
+   <div class="pic" style="background:${f.col}">${f.ini}</div>
+   <div style="flex:1;">
+     <div class="who"><b>${f.who}</b> · ${f.role}<span class="pill p-${f.tag}">${f.tag==='mag'?'magazine':f.tag}</span></div>
+     <div class="txt">${f.txt}</div>
+     ${f.img?`<img class="thumb" src="${f.img}" alt="">`:''}
+     <div class="meta">${f.meta}</div>
+   </div>
+ </div>`).join('');
+
+document.getElementById('mag-teaser').style.backgroundImage=`url(${IMG("monsoon-cover",700,300)})`;
+document.getElementById('mag-cover').style.backgroundImage=`url(${IMG("monsoon-cover",1200,500)})`;
+
+const upcoming=[
+ {d:"19 Aug",e:"Quiz Club trials",c:"var(--teal)"},
+ {d:"20 Aug",e:"Library books return",c:"var(--violet)"},
+ {d:"23 Aug",e:"Parent-Teacher Meeting",c:"var(--coral)"},
+ {d:"25 Aug",e:"Magazine submissions close",c:"var(--pink)"},
+ {d:"27 Aug",e:"Inter-house football final",c:"#c07f0a"}
+];
+document.getElementById('upcoming').innerHTML=upcoming.map(u=>
+ `<div style="display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13px;align-items:center;">
+   <div style="width:5px;height:30px;border-radius:99px;background:${u.c};flex:none;"></div>
+   <div style="width:52px;flex:none;font-size:11.5px;font-weight:700;color:${u.c};">${u.d}</div>
+   <div>${u.e}</div></div>`).join('');
+
+const catchup=[
+ {day:"Thursday, 13 August — you were absent",items:[
+  {subj:"Mathematics",what:"Comparing Quantities — percentage increase and decrease",note:"Exercise 8.2 worked out in class",todo:"Homework: Q1–8"},
+  {subj:"Science",what:"Nutrition in animals — the digestive system",note:"Labelled diagram shared by Mrs. Mahato",todo:"Draw &amp; label"},
+  {subj:"Hindi",what:"पाठ 4 — कक्षा में वाचन पूर्ण",note:"सारांश अगली कक्षा में"}]},
+ {day:"Friday, 14 August — you were absent",items:[
+  {subj:"Social Science",what:"The freedom movement — 1942 to 1947",note:"Map work handed out",todo:"Due 20 Aug"},
+  {subj:"English",what:"Chapter 3 reading and vocabulary",note:"Five new words to be noted"},
+  {subj:"School",what:"Independence Day rehearsal",note:"Class VII-B is singing in the assembly"}]},
+ {day:"Saturday, 15 August",items:[
+  {subj:"Gallery",what:"38 new photographs from Independence Day added",note:"Assembly, flag hoisting and the cultural programme"}]}
+];
+function renderCatchup(){
+ document.getElementById('catchup-body').innerHTML=catchup.map(d=>
+  `<div class="cu-day"><div class="d">${d.day}</div>
+   ${d.items.map(i=>`<div class="cu-row">
+     <div class="subj">${i.subj}</div>
+     <div class="what">${i.what}<em>${i.note}</em></div>
+     ${i.todo?`<div class="todo">${i.todo}</div>`:''}</div>`).join('')}</div>`).join('');
+}
+renderCatchup();
+function markAllSeen(){
+ document.getElementById('catchup-body').innerHTML=
+  '<div style="text-align:center;padding:38px 10px;color:var(--soft);"><div style="font-family:var(--display);font-size:19px;font-weight:700;color:var(--teal);margin-bottom:6px;">You are all caught up.</div>New items appear here the next time something is posted.</div>';
+ document.getElementById('cu-count').style.display='none';
+}
+
+const clubs=[
+ {n:"Quiz Club",m:"Wednesdays, 3:30 PM",x:"Trials for the inter-school team",on:true,s:"quiz-club"},
+ {n:"Debate Society",m:"Tuesdays, 3:30 PM",x:"Motion: exams should be open-book",on:false,s:"debate-club"},
+ {n:"Science Club",m:"Fridays, 2:45 PM",x:"Building a working water filter model",on:true,s:"science-club"},
+ {n:"Art &amp; Craft",m:"Thursdays, 3:00 PM",x:"Posters for the monsoon issue",on:false,s:"art-club"},
+ {n:"Football",m:"Daily, 4:00 PM",x:"Inter-house final on Friday",on:true,s:"football-club"},
+ {n:"Editorial Board VII-B",m:"Mondays, 3:15 PM",x:"Editing the August issue",on:true,s:"editorial-club"}
+];
+function renderClubs(){
+ document.getElementById('clubs-grid').innerHTML=clubs.map((c,i)=>
+  `<div class="club">
+    <div class="ct" style="background-image:url(${IMG(c.s,420,220)})"></div>
+    <div class="bd">
+      <div class="nm">${c.n}</div><div class="mt">${c.m}</div><div class="nx">${c.x}</div>
+      <button class="follow ${c.on?'on':''}" onclick="toggleClub(${i})">${c.on?'Following':'Follow'}</button>
+    </div></div>`).join('');
+}
+function toggleClub(i){clubs[i].on=!clubs[i].on;renderClubs();}
+renderClubs();
+
+const mags=[
+ {mo:"August",cl:"VII-B",th:"Monsoon",s:"mag-monsoon",link:true},
+ {mo:"July",cl:"VII-B",th:"Our Town",s:"mag-town"},
+ {mo:"August",cl:"VIII-A",th:"Inventions",s:"mag-invent"},
+ {mo:"August",cl:"VI-C",th:"Animals",s:"mag-animals"},
+ {mo:"July",cl:"IX-B",th:"Heroes",s:"mag-heroes"},
+ {mo:"June",cl:"VII-B",th:"Summer",s:"mag-summer"}
+];
+document.getElementById('mag-shelf').innerHTML=mags.map(m=>
+ `<div class="mag" ${m.link?`onclick="location.href='magazine.html'"`:''}>
+   <div class="cv" style="background-image:url(${IMG(m.s,400,320)})">
+     <div class="in"><div class="cl">${m.cl}</div><div class="mo">${m.mo}</div></div></div>
+   <div class="ft">${m.th}</div></div>`).join('');
+
+const g1=[["ind-flag","Flag hoisting"],["ind-culture","Cultural programme"],["ind-assembly","Morning assembly"],["ind-prize","Prize distribution"],["ind-choir","Class VII choir"],["ind-march","March past"]];
+const g2=[["sp-relay","Relay final"],["sp-jump","Long jump"],["sp-kabaddi","Kabaddi"],["sp-prize","Prize ceremony"]];
+const gal=a=>a.map(([s,l])=>
+ `<div class="ph-tile"><img src="${IMG(s,500,380)}" alt="${l}"><div class="cap">${l}</div></div>`).join('');
+document.getElementById('gal1').innerHTML=gal(g1);
+document.getElementById('gal2').innerHTML=gal(g2);
+
+const wall=[
+ {q:"Can someone explain question 7 of Exercise 8.2? I keep getting a negative answer.",m:"Rohan · 3 hours ago",a:[
+  {t:"You have to take the original price as 100, not the new price. Then the decrease works out to 12%.",w:"Ananya · 2 hours ago",best:true},
+  {t:"Same doubt — thanks!",w:"Priya · 1 hour ago"}]},
+ {q:"What exactly do we have to label in the digestive system diagram?",m:"Yamir · yesterday",a:[
+  {t:"Mouth, oesophagus, stomach, small intestine, large intestine, liver and pancreas. Ma'am said neat labels, no colour needed.",w:"Ishita · yesterday",best:true}]}
+];
+function renderWall(){
+ document.getElementById('wall-body').innerHTML=wall.map(w=>
+  `<div class="q"><div class="qt">${w.q}</div><div class="qm">${w.m}</div>
+   ${w.a.map(a=>`<div class="ans ${a.best?'best':''}">${a.t}
+     <div class="aw">${a.w}${a.best?' · <span class="tick">✓ Marked best answer by teacher</span>':''}</div></div>`).join('')}
+  </div>`).join('');
+}
+renderWall();
+function askQ(){
+ const el=document.getElementById('q-input');
+ if(!el.value.trim())return;
+ wall.unshift({q:el.value.trim(),m:"Yamir · just now · awaiting teacher approval",a:[]});
+ el.value='';renderWall();
+}
+
+const ach=[
+ {c:"linear-gradient(135deg,#f5a524,#e08a00)",i:"1",n:"Ananya Das — District Science Fair",d:"First place, working model category · VII-B"},
+ {c:"linear-gradient(135deg,#a8b0bd,#7d8794)",i:"2",n:"School Quiz Team",d:"Runners-up, Ghatshila inter-school quiz"},
+ {c:"linear-gradient(135deg,#12a594,#0b7f72)",i:"★",n:"Rohan Mahato — Photography",d:"Photo essay selected for the August magazine"},
+ {c:"linear-gradient(135deg,#e0559c,#b4327a)",i:"★",n:"Class VII-B",d:"Best class choir, Independence Day assembly"}
+];
+document.getElementById('ach-body').innerHTML=ach.map(a=>
+ `<div class="ach"><div class="medal" style="background:${a.c}">${a.i}</div>
+  <div><div class="an">${a.n}</div><div class="ad">${a.d}</div></div></div>`).join('');
+
+const houses=[["Tagore","linear-gradient(90deg,#3b2f8f,#6d4bd6)",78],["Nehru","linear-gradient(90deg,#12a594,#3fd0bd)",71],["Gandhi","linear-gradient(90deg,#f5a524,#ffc963)",65],["Bose","linear-gradient(90deg,#ef5f5f,#f58a8a)",59]];
+document.getElementById('house-body').innerHTML=houses.map(([n,c,p])=>
+ `<div class="house"><div class="hn">${n}</div>
+  <div class="ht"><div class="hf" style="width:${p}%;background:${c}"></div></div>
+  <div class="hp">${p*4}</div></div>`).join('');
+
+function go(t){
+ document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+ document.querySelectorAll('.view').forEach(v=>v.style.display=(v.id===t?'block':'none'));
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+ const b=e.target.closest('button'); if(b) go(b.dataset.tab);
+});
+</script>
+</body>
+</html>
